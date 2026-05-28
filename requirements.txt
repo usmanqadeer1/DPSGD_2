@@ -1,0 +1,16 @@
+torch>=2.0.0
+torchvision>=0.15.0
+numpy>=1.24.0
+scipy>=1.10.0
+scikit-learn>=1.2.0
+matplotlib>=3.7.0
+tqdm>=4.65.0
+opt_einsum>=3.3.0
+
+# Official K-FAC: pip install git+https://github.com/gpauloski/kfac-pytorch.git
+
+# Vendored under third_party/ (scripts/setup_third_party.ps1):
+#   lixilinx/psgd_torch
+#   jonathanmei/kradagrad
+#   nikhilvyas/SOAP
+#   Daniil-Selikhanovych/Shampoo_optimizer  (reference; PyTorch port in optimizers/shampoo_daniil.py)
