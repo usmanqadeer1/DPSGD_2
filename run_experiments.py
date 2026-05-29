@@ -32,7 +32,7 @@ ensure_third_party_paths()  # auto-clone third_party/ on Kaggle / fresh clones
 
 from optimizers.factory import build_optimizer
 from trainer import train
-from utils import get_device, save_comparison_plots, set_seed
+from utils import resolve_device, save_comparison_plots, set_seed
 
 
 def parse_args() -> argparse.Namespace:
@@ -65,7 +65,7 @@ def main() -> None:
     results_dir = args.results_dir or os.path.join("results", args.task)
     os.makedirs(results_dir, exist_ok=True)
 
-    device = get_device() if args.device is None else __import__("torch").device(args.device)
+    device = resolve_device(args.device)
     print(f"Task: {args.task} | Device: {device} | Seed: {args.seed}")
     print(f"Optimizers ({len(optimizers)}): {optimizers}")
 

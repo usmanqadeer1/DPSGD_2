@@ -26,8 +26,58 @@ def set_seed(seed: int) -> None:
     torch.backends.cudnn.benchmark = False
 
 
+def cuda_kernels_work() -> bool:
+    """True if CUDA is available and a simple GPU op runs (catches sm_60 P100 vs new PyTorch)."""
+    if not torch.cuda.is_available():
+        return False
+    try:
+        x = torch.ones(1, device="cuda")
+        (x + 1).item()
+        torch.cuda.synchronize()
+        return True
+    except Exception:
+        return False
+
+
+def resolve_device(requested: Optional[str] = None) -> torch.device:
+    """
+    Pick training device. Falls back to CPU when CUDA is unavailable or kernels
+    cannot run (e.g. Tesla P100 sm_60 with PyTorch builds that require sm_70+).
+    """
+    if requested is not None:
+        req = requested.strip().lower()
+        if req == "cpu":
+            return torch.device("cpu")
+        if req in ("cuda", "gpu"):
+            if cuda_kernels_work():
+                return torch.device("cuda")
+            name = torch.cuda.get_device_name(0) if torch.cuda.is_available() else "N/A"
+            cap = torch.cuda.get_device_capability(0) if torch.cuda.is_available() else None
+            print(
+                f"WARNING: --device cuda requested but GPU kernels failed on {name} "
+                f"(capability {cap}). Falling back to CPU.\n"
+                "  Kaggle P100 (sm_60): use Settings → Accelerator → GPU T4, or run with --device cpu.\n"
+                "  Or install an older PyTorch build that supports your GPU: https://pytorch.org"
+            )
+            return torch.device("cpu")
+        return torch.device(requested)
+
+    if cuda_kernels_work():
+        return torch.device("cuda")
+    if torch.cuda.is_available():
+        name = torch.cuda.get_device_name(0)
+        cap = torch.cuda.get_device_capability(0)
+        print(
+            f"WARNING: CUDA device {name} (capability {cap}) is visible but PyTorch "
+            "cannot run kernels on it; using CPU.\n"
+            "  On Kaggle: switch to a T4 GPU (sm_75+) or pass --device cpu."
+        )
+    return torch.device("cpu")
+
+
 def get_device() -> torch.device:
-    return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    """Auto-select cuda if usable, else cpu."""
+    return resolve_device(None)
 
 
 @dataclass

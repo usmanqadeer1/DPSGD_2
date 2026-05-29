@@ -76,13 +76,21 @@ pip install -r requirements.txt
 pip install git+https://github.com/gpauloski/kfac-pytorch.git
 ```
 
-**Kaggle / Colab:** after `git clone`, run experiments as usual — `third_party/` is created automatically. Install deps in a cell:
+**Kaggle / Colab:** after `git clone`, run experiments as usual — `third_party/` is created automatically.
+
+**GPU note:** Kaggle’s **Tesla P100** (CUDA sm_60) is **not** supported by recent PyTorch wheels (need sm_70+). Either:
+- **Settings → Accelerator → GPU T4** (recommended), then `--device cuda`, or
+- Stay on P100 and use `--device cpu` (slow for full 8-optimizer sweeps).
+
+Install deps in a cell:
 
 ```python
 !pip install -q opt_einsum
 !pip install -q git+https://github.com/gpauloski/kfac-pytorch.git
-!python run_experiments.py --task mnist --device cuda --optimizers kradagrad
+!python run_experiments.py --task mnist --device cuda
 ```
+
+If CUDA kernels fail, the runner auto-falls back to CPU with a warning.
 
 | Optimizer | Implementation | Hyperparameters |
 |-----------|----------------|-----------------|
