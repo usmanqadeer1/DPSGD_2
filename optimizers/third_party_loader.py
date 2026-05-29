@@ -25,15 +25,12 @@ _PATHS = (
 
 _REPOS_READY = False
 
+# Upstream __init__.py imports KradagradPP -> needs missing batched_matrix_functions.
 _KRADAGRAD_INIT_PATCH = '''\
-# Patched for DPSGD benchmarks: KradagradPP needs missing batched_matrix_functions on release.
-from .kradagradmm import KradagradMM
-from .third_party.shampoo.shampoo import (
-    ShampooHyperParams as HyperParams,
-    Shampoo,
-)
+"""KrADagrad (vendored). Import submodules directly, e.g. ``kradagrad.kradagradmm.KradagradMM``."""
 
-__all__ = ["KradagradMM", "HyperParams", "Shampoo"]
+# Do not import KradagradPP here (release branch lacks batched_matrix_functions).
+__all__: list[str] = []
 '''
 
 
@@ -42,9 +39,16 @@ def third_party_root() -> Path:
 
 
 def _patch_kradagrad_init() -> None:
+    """Replace upstream package __init__ that pulls in broken KradagradPP."""
     init_path = _THIRD_PARTY / "kradagrad" / "__init__.py"
-    if init_path.is_file():
+    if not init_path.parent.is_dir():
+        return
+    current = init_path.read_text(encoding="utf-8") if init_path.is_file() else ""
+    if current == _KRADAGRAD_INIT_PATCH:
+        return
+    if "KradagradPP" in current or "batched_matrix_functions" in current or current.strip() != _KRADAGRAD_INIT_PATCH.strip():
         init_path.write_text(_KRADAGRAD_INIT_PATCH, encoding="utf-8")
+        print("[third_party] Patched kradagrad/__init__.py (skip KradagradPP import).")
 
 
 def _clone_repo(name: str, url: str, branch: Optional[str], marker: str) -> None:
@@ -59,8 +63,6 @@ def _clone_repo(name: str, url: str, branch: Optional[str], marker: str) -> None
     cmd.extend([url, str(dest)])
     print(f"[third_party] Cloning {name} from {url} ...")
     subprocess.run(cmd, check=True, cwd=_ROOT)
-    if name == "kradagrad":
-        _patch_kradagrad_init()
 
 
 def ensure_third_party_repos() -> None:
@@ -70,6 +72,7 @@ def ensure_third_party_repos() -> None:
         return
     for name, url, branch, marker in _VENDORED_REPOS:
         _clone_repo(name, url, branch, marker)
+    _patch_kradagrad_init()
     _REPOS_READY = True
 
 
