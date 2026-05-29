@@ -144,6 +144,17 @@ EXPERIMENTS: Dict[str, ExperimentConfig] = {
         baseline_lrs={
             "sgd": {"lr": 0.1},
             "adam": {"lr": 0.005},
+            "kfac": {
+                "lr": 0.01,
+                "momentum": 0.05,
+                "damping": 0.001,
+            },
+            "shampoo": {
+                "lr": 0.5,
+                "limit": 200,
+                "alpha": 0.5,
+                "epsilon": 1e-4,
+            },
             "psgd": {
                 "lr": 0.1,
                 "precond_lr": 0.1,
@@ -179,6 +190,11 @@ EXPERIMENTS: Dict[str, ExperimentConfig] = {
         baseline_lrs={
             "sgd": {"lr": 0.1},
             "adam": {"lr": 0.001},
+            "kfac": {
+                "lr": 0.5,
+                "momentum": 0.05,
+                "damping": 0.001,
+            },
             "shampoo": {
                 "lr": 0.1,
                 "limit": 10,
@@ -215,9 +231,4 @@ DEFAULT_OPTIMIZERS: List[str] = [
     "kradagrad",
 ]
 
-TASK_OPTIMIZERS: Dict[str, List[str]] = {
-    "curves": DEFAULT_OPTIMIZERS,
-    "mnist": DEFAULT_OPTIMIZERS,
-    "fashionmnist": ["sgd", "adam", "psgd", "dpsgd", "soap", "kradagrad"],
-    "addition": ["sgd", "adam", "psgd", "dpsgd", "shampoo", "soap", "kradagrad"],
-}
+TASK_OPTIMIZERS: Dict[str, List[str]] = {name: list(DEFAULT_OPTIMIZERS) for name in EXPERIMENTS}

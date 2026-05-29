@@ -15,13 +15,7 @@ Values come from `configs.py` (DPSGD paper Table 1 where noted) and `optimizers/
 | **fashionmnist** | LeNet-5 | 20 | 64 | 1000 | Cross-entropy |
 | **addition** | Simple RNN (hidden 20) | 10 | 100 | 100 | MSE |
 
-**Optimizers run per task** (`TASK_OPTIMIZERS` in `configs.py`):
-
-| Task | Optimizers |
-|------|------------|
-| curves, mnist | sgd, adam, psgd, dpsgd, kfac, shampoo, soap, kradagrad |
-| fashionmnist | sgd, adam, psgd, dpsgd, soap, kradagrad *(no kfac, shampoo)* |
-| addition | sgd, adam, psgd, dpsgd, shampoo, soap, kradagrad *(no kfac)* |
+**Optimizers run per task:** all eight (`sgd`, `adam`, `psgd`, `dpsgd`, `kfac`, `shampoo`, `soap`, `kradagrad`) for every experiment unless you override with `--optimizers`.
 
 ---
 
@@ -76,8 +70,8 @@ Values come from `configs.py` (DPSGD paper Table 1 where noted) and `optimizers/
 | **Adam** | 0.005 | betas (0.9, 0.999) |
 | **PSGD** | 0.1 | `precond_lr` 0.1, `T1` 1 |
 | **DPSGD** | α 0.1 | β 0.7, `T1` 1, `T2` 5, damping **additive** (Eq. 36), `factor_absorbed` false |
-| **K-FAC** | — | *not run* |
-| **Shampoo** | — | *not run* |
+| **K-FAC** | 0.01 | β→`momentum` 0.05, γ→`damping` 0.001 (same as MNIST) |
+| **Shampoo** | 0.5 | `limit` 200, `alpha` 0.5, `epsilon` 1e-4 (same as MNIST) |
 | **SOAP** | 0.1 | betas (0.95, 0.95), `precondition_frequency` 10 |
 | **KrADagrad** | 0.1 | KrADagrad defaults as above |
 
@@ -91,7 +85,7 @@ Values come from `configs.py` (DPSGD paper Table 1 where noted) and `optimizers/
 | **Adam** | 0.001 | betas (0.9, 0.999) |
 | **PSGD** | 0.1 | `precond_lr` 0.1, `T1` 1 |
 | **DPSGD** | α 0.1 | β 0.7, `T1` 1, `T2` 5, factor-absorbed (Eq. 46) |
-| **K-FAC** | — | *not run* |
+| **K-FAC** | 0.5 | β→`momentum` 0.05, γ→`damping` 0.001 (same as CURVES) |
 | **Shampoo** | 0.1 | `limit` **10**, `alpha` 0.5, `epsilon` 1e-4 |
 | **SOAP** | 0.1 | betas (0.95, 0.95), `precondition_frequency` 10 |
 | **KrADagrad** | 0.1 | KrADagrad defaults as above |
