@@ -9,11 +9,14 @@ Research-grade PyTorch codebase to benchmark **Damped Preconditioned Stochastic 
 | FashionMNIST | LeNet-5 (ReLU) | Cross-entropy |
 | Synthetic addition | Simple RNN (hidden 20) | MSE |
 
+**Hyperparameters:** see [HYPERPARAMETERS.md](HYPERPARAMETERS.md) for Table-1 settings per experiment and optimizer.
+
 ## Project layout
 
 ```
 DPSGD/
 ├── configs.py           # Experiment hyperparameters
+├── HYPERPARAMETERS.md   # Tables: α, β, γ per task & optimizer
 ├── datasets.py          # Data loading (CURVES .mat, MNIST, synthetic addition)
 ├── models.py            # FCN, LeNet-5, SimpleRNN
 ├── trainer.py           # Unified training loop
