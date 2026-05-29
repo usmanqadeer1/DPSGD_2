@@ -62,12 +62,26 @@ python run_experiments.py --task addition --optimizers dpsgd shampoo
 
 ## Third-party optimizer sources (official implementations)
 
-Run once to clone vendored repos:
+**First run** auto-clones missing repos into `third_party/` (needs `git` + internet).  
+Or clone manually:
 
 ```powershell
 .\scripts\setup_third_party.ps1
+```
+
+Then:
+
+```powershell
 pip install -r requirements.txt
 pip install git+https://github.com/gpauloski/kfac-pytorch.git
+```
+
+**Kaggle / Colab:** after `git clone`, run experiments as usual — `third_party/` is created automatically. Install deps in a cell:
+
+```python
+!pip install -q opt_einsum
+!pip install -q git+https://github.com/gpauloski/kfac-pytorch.git
+!python run_experiments.py --task mnist --device cuda --optimizers kradagrad
 ```
 
 | Optimizer | Implementation | Hyperparameters |

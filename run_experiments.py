@@ -26,6 +26,10 @@ if str(_ROOT) not in sys.path:
 from configs import EXPERIMENTS, TASK_OPTIMIZERS
 from datasets import get_data
 from models import build_model
+from optimizers.third_party_loader import ensure_third_party_paths
+
+ensure_third_party_paths()  # auto-clone third_party/ on Kaggle / fresh clones
+
 from optimizers.factory import build_optimizer
 from trainer import train
 from utils import get_device, save_comparison_plots, set_seed
